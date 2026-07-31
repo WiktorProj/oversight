@@ -106,6 +106,16 @@ addLayer("ach", {
             tooltip: "Buy ?iv",
             done(){return hasUpgrade("P",14)},
         },
+        28:{
+            name: "Age of automation... again",
+            tooltip: "Get an automation point",
+            done(){return player["automations"].gt(0)},
+        },
+        29:{
+            name: "Epic!!!",
+            tooltip: "Buy !iii",
+            done(){return hasUpgrade("p",13)},
+        },
     },
     tabFormat:{
         "Achievements":{
@@ -224,7 +234,7 @@ addLayer("r", {
                 ["display-text",
                     function() { return `You have <h2 style="color: rgb(42, 255, 234); text-shadow: rgb(42, 255, 234) 0px 0px 10px;">${format(player["specifics"])}</h2> specifics, which are multiplying point gain by <h2 style="color: rgb(42, 255, 234); text-shadow: rgb(42, 255, 234) 0px 0px 10px;">x${format(player["specifics"].add(1).pow(0.7))}</h2>` }],
                 "blank",
-                "clickables",
+                ["clickable",11],
                 "blank",
                 ["display-text",
                     function() {
@@ -255,6 +265,25 @@ addLayer("r", {
             ],
             unlocked(){
                 return hasUpgrade('r',12)
+            }
+        },
+        "Automation":{
+            content: [
+                "main-display",
+                ["display-text",
+                    function() { return `You have <h2 style="color: rgb(42, 255, 234); text-shadow: rgb(42, 255, 234) 0px 0px 10px;">${format(player["specifics"])}</h2> specifics` }],
+                "blank",
+                ["display-text",
+                    function() { return `You have <h2 style="color: rgb(0, 127, 0); text-shadow: rgb(0, 127, 0) 0px 0px 10px;">${format(player["automations"],0)}</h2> automation points` }],
+                ["display-text",
+                    function() { return `You will keep automation points on future resets` }],
+                "blank",
+                "buyables",
+                "blank",
+                ["clickable",12],
+            ],
+            unlocked(){
+                return hasUpgrade('P',21)
             }
         }
     },
@@ -353,6 +382,20 @@ addLayer("r", {
             display() {return `Click here to ${player["depositingrespecs"]?"stop":"start"} depositing respecs\n${format(player["specificsspeed"])} respecs → ${format(player["specificsgain"].times(player["specificsspeed"]))} specifics`},
             canClick() {return player[this.layer].points.gt(0) && hasUpgrade("r",12)},
             onClick() {player["depositingrespecs"] = !player["depositingrespecs"]}
+        },
+        12: {
+            display() {return `Respec automation buyables`},
+            canClick() {return true},
+            onClick() {
+                let buyables = [21,22]
+                for (i in buyables) {
+                    while (getBuyableAmount(this.layer,buyables[i]).gt(0)) {
+                        player["automations"] = player["automations"].add(layers["r"].buyables[21].cost(getBuyableAmount(this.layer,buyables[i]).sub(1)))
+                        setBuyableAmount(this.layer,buyables[i],getBuyableAmount(this.layer,buyables[i]).sub(1))
+                    }
+                }
+            },
+            unlocked(){return hasAchievement("ach",28)}
         }
     },
     milestones: {
@@ -368,19 +411,65 @@ addLayer("r", {
             unlocked() {return hasUpgrade('s',31)}
         },
     },
+    buyables: {
+        11: {
+            cost(x) { return {
+                "respecs":new Decimal(10000).mul(new Decimal(1.2).pow(x)),
+                "specifics":new Decimal(500).mul(new Decimal(1.2).pow(x))
+            }},
+            display() { return `<h2>Gain automation points</h2>\nCost: ${format(this.cost()["respecs"])} respecs, ${format(this.cost()["specifics"])} specifics\nEffect: get 1 automation point` },
+            canAfford() { return player[this.layer].points.gte(this.cost()["respecs"]) && player["specifics"].gte(this.cost()["specifics"]) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost()["respecs"])
+                player["specifics"] = player["specifics"].sub(this.cost()["specifics"])
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+                player["automations"] = player["automations"].add(1)
+            },
+        },
+        21: {
+            cost(x) { return x.add(1) },
+            display() { return `<h2>Respec autoupgrade</h2>\nCost: ${format(this.cost())} automation points\nEffect: ${format(getBuyableAmount(this.layer, this.id),0)}/10 automated upgrades` },
+            canAfford() { return getBuyableAmount(this.layer, this.id).lt(10)&&player["automations"].gte(this.cost()) },
+            buy() {
+                player["automations"] = player["automations"].sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() {
+                return hasAchievement("ach",28)
+            }
+        },
+        22: {
+            cost(x) { return x.add(1) },
+            display() { return `<h2>Serenity gain</h2>\nCost: ${format(this.cost())} automation points\nEffect: ${format(getBuyableAmount(this.layer, this.id).div(2),1)}% of serenity gain per sec` },
+            canAfford() { return getBuyableAmount(this.layer, this.id).lt(200)&&player["automations"].gte(this.cost()) },
+            buy() {
+                player["automations"] = player["automations"].sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() {
+                return hasAchievement("ach",28)
+            }
+        },
+    },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
         {key: "r", description: "R: reset for respecs", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     doReset(l) {
         if (l != this.layer) {
-            layerDataReset(this.layer,["milestones"])
+            layerDataReset(this.layer,["milestones","buyables"])
             if (player["specifics"].eq(0) && l=="s") sach11 = true
             if (hasUpgrade("P",11)) {
                 player["specifics"] = player["specifics"].times(0.05)
             } else {
                 player["specifics"] = new Decimal(0)
             }
+        }
+    },
+    automate(){
+        let upgrade = [11,12,13,14,21,22,23,24,31,32]
+        for (let i=0;i<getBuyableAmount(this.layer,21).toNumber();i++){
+            buyUpgrade("r",upgrade[i])
         }
     },
     passiveGeneration(){
@@ -595,6 +684,9 @@ addLayer("s", {
     branches: [
         "r"
     ],
+    passiveGeneration(){
+        return getBuyableAmount("r",22).div(200)
+    },
     layerShown(){return player["serenityunlocked"]}
 })
 
@@ -730,6 +822,22 @@ addLayer("P", {
             cost: new Decimal(8),
             unlocked(){
                 return hasChallenge("s",22)
+            },
+        },
+        21:{
+            title: "?v",
+            description: "Unlock another tab in respec",
+            cost: new Decimal(8),
+            unlocked(){
+                return hasUpgrade("P",14)
+            },
+        },
+        22:{
+            title: "?vi",
+            description: "x3 specifics, x2 respec deposit speed",
+            cost: new Decimal(12),
+            unlocked(){
+                return hasUpgrade("P",21)
             },
         },
     },

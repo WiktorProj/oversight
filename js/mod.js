@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1+ε",
+	num: "-1+2ε",
 	name: "oversight ?",
 }
 
@@ -76,6 +76,8 @@ function addedPlayerData() { return {
 	"specificsspeed":new Decimal(1),
 	"depositingrespecs":false,
 
+	"automations":new Decimal(0),
+
 	"serenityunlocked":false,
 	"postcedingunlocked":false,
 	"precedingunlocked":false,
@@ -94,7 +96,8 @@ function getSpecificsGain() {
 	if (inChallenge("s",11)) gain = gain.sqrt()
 
 	if (hasUpgrade('P',11)) gain = gain.times(1.5)
-	
+	if (hasUpgrade('P',22)) gain = gain.times(3)
+
 	if (hasUpgrade('p',13)) gain = gain.times(5)
 
 	if (inChallenge("s",22)) gain = gain.div(7.5)
@@ -104,6 +107,7 @@ function getSpecificsGain() {
 	if (hasUpgrade('r',22)) speed = speed.times(2)
 	if (hasUpgrade('s',23)) speed = speed.times(2.17)
 	if (hasUpgrade('P',11)) speed = speed.times(1.5)
+	if (hasUpgrade('P',22)) speed = speed.times(2)
 	
 	if (inChallenge("s",22)) speed = speed.div(7.5)
 	
