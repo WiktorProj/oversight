@@ -283,7 +283,7 @@ addLayer("r", {
                 ["clickable",12],
             ],
             unlocked(){
-                return hasUpgrade('P',21)
+                return hasUpgrade('P',21)||hasAchievement("ach",28)
             }
         }
     },
@@ -626,7 +626,7 @@ addLayer("s", {
             rewardDescription: "x3 points",
             canComplete: function() {return player.points.gte(500)},
             onEnter(){
-                layerDataReset("r",["milestones"])
+                layerDataReset("r",["milestones","buyables"])
                 player["specifics"] = new Decimal(0)
             },
             onExit:this.onEnter,
@@ -641,7 +641,7 @@ addLayer("s", {
             rewardDescription: "x4 points, x2 specifics, x2 respec",
             canComplete: function() {return player['r'].points.gte(1000)},
             onEnter(){
-                layerDataReset("r",["milestones"])
+                layerDataReset("r",["milestones","buyables"])
                 player["specifics"] = new Decimal(0)
             },
             onExit:this.onEnter,
@@ -654,7 +654,7 @@ addLayer("s", {
             rewardDescription: "Unlock next reset layer",
             canComplete: function() {return player['specifics'].gte(200)},
             onEnter(){
-                layerDataReset("r",["milestones"])
+                layerDataReset("r",["milestones","buyables"])
                 player["specifics"] = new Decimal(0)
             },
             onExit:this.onEnter,
@@ -670,7 +670,7 @@ addLayer("s", {
             rewardDescription: "x2 precedes, x1.5 postcedes",
             canComplete: function() {return player["r"].points.gte(20000)},
             onEnter(){
-                layerDataReset("r",["milestones"])
+                layerDataReset("r",["milestones","buyables"])
                 player["specifics"] = new Decimal(0)
             },
             onExit:this.onEnter,
