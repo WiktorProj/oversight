@@ -12,14 +12,17 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1",
-	name: "oversight",
+	num: "-1+ε",
+	name: "oversight ?",
 }
 
-let changelog = `<h1>changelog:</h1><br>
-	<h3>v-1</h3><br>
+let changelog = `<h1>changelog:</h1><br><br>
+	<h3>v-1+xε: oversight ?</h3><br>
+		- nothing much to note<br><br>
+	<h3>v-1: oversight</h3><br>
 		- stuff and things<br>
-		- i'm still workin on it hold on`
+		- i'm still workin on it hold on<br>
+		- first release??`
 
 let winText = `you win.`
 
@@ -58,9 +61,9 @@ function getPointGen() {
 	if (hasUpgrade('s',32)) gain = gain.times(0.8)
 
 	if (hasUpgrade('p',11)) gain = gain.times(3)
+	if (hasUpgrade('p',13)) gain = gain.times(6)
 
 	if (inChallenge("s",11)) gain = gain.sqrt()
-	
 	if (inChallenge("s",21)) gain = gain.pow(0.2)
 	
 	return gain
@@ -90,10 +93,19 @@ function getSpecificsGain() {
 	if (hasChallenge('s',12)) gain = gain.times(2)
 	if (inChallenge("s",11)) gain = gain.sqrt()
 
+	if (hasUpgrade('P',11)) gain = gain.times(1.5)
+	
+	if (hasUpgrade('p',13)) gain = gain.times(5)
+
+	if (inChallenge("s",22)) gain = gain.div(7.5)
+
 	let speed = new Decimal(1)
 
 	if (hasUpgrade('r',22)) speed = speed.times(2)
 	if (hasUpgrade('s',23)) speed = speed.times(2.17)
+	if (hasUpgrade('P',11)) speed = speed.times(1.5)
+	
+	if (inChallenge("s",22)) speed = speed.div(7.5)
 	
 	return [gain,speed]
 }

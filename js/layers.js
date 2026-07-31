@@ -91,6 +91,21 @@ addLayer("ach", {
             tooltip: "Reset for precedes",
             done(){return player["P"].points.gt(0)},
         },
+        25:{
+            name: "Keepers",
+            tooltip: "Buy ?ii",
+            done(){return hasUpgrade("P",12)},
+        },
+        26:{
+            name: "Patience",
+            tooltip: "Complete challenge ~↓↓↓↓",
+            done(){return hasChallenge("s",22)},
+        },
+        27:{
+            name: "Age of automation",
+            tooltip: "Buy ?iv",
+            done(){return hasUpgrade("P",14)},
+        },
     },
     tabFormat:{
         "Achievements":{
@@ -361,8 +376,16 @@ addLayer("r", {
         if (l != this.layer) {
             layerDataReset(this.layer,["milestones"])
             if (player["specifics"].eq(0) && l=="s") sach11 = true
-            player["specifics"] = new Decimal(0)
+            if (hasUpgrade("P",11)) {
+                player["specifics"] = player["specifics"].times(0.05)
+            } else {
+                player["specifics"] = new Decimal(0)
+            }
         }
+    },
+    passiveGeneration(){
+        if (hasUpgrade('P',14)) return 0.01
+        return 0
     },
     layerShown(){return true}
 })
@@ -389,6 +412,7 @@ addLayer("s", {
         if (hasUpgrade('r',31)) mult = mult.times(1.36)
         if (hasUpgrade('s',32)) mult = mult.times(0.8)
         if (hasChallenge('s',12)) mult = mult.times(2)
+        if (hasUpgrade('p',13)) mult = mult.times(4)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -550,6 +574,19 @@ addLayer("s", {
             },
             unlocked(){return hasUpgrade("s",43)},
         },
+        22: {
+            name: "~↓↓↓↓",
+            challengeDescription: "/7.5 respec deposit speed and specifics gain",
+            goalDescription: "20,000 respecs",
+            rewardDescription: "x2 precedes, x1.5 postcedes",
+            canComplete: function() {return player["r"].points.gte(20000)},
+            onEnter(){
+                layerDataReset("r",["milestones"])
+                player["specifics"] = new Decimal(0)
+            },
+            onExit:this.onEnter,
+            unlocked(){return hasUpgrade("P",13)},
+        },
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -579,6 +616,7 @@ addLayer("p", {
     exponent: 0.75, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasChallenge('s',22)) mult = mult.times(1.5)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -607,6 +645,14 @@ addLayer("p", {
             cost: new Decimal(1),
             unlocked(){
                 return hasUpgrade("p",11)
+            },
+        },
+        13:{
+            title: "!iii",
+            description: "x3 precedes, x4 serenity, x5 specifics, x6 points",
+            cost: new Decimal(10),
+            unlocked(){
+                return hasAchievement("ach",24)
             },
         },
     },
@@ -638,6 +684,8 @@ addLayer("P", {
     exponent: 0.3, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
+        if (hasChallenge('s',22)) mult = mult.times(2)
+        if (hasUpgrade('p',13)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -655,6 +703,35 @@ addLayer("P", {
         },
     },
     upgrades: {
+        11:{
+            title: "?i",
+            description: "x1.5 specifics and x1.5 respec deposit speed",
+            cost: new Decimal(1),
+        },
+        12:{
+            title: "?ii",
+            description: "Keep 5% of your specifics on reset",
+            cost: new Decimal(2),
+            unlocked(){
+                return hasUpgrade("P",11)
+            },
+        },
+        13:{
+            title: "?iii",
+            description: "Unlock another serenity challenge",
+            cost: new Decimal(4),
+            unlocked(){
+                return hasUpgrade("P",12)
+            },
+        },
+        14:{
+            title: "?iv",
+            description: "Start gaining 1% of respecs per second",
+            cost: new Decimal(8),
+            unlocked(){
+                return hasChallenge("s",22)
+            },
+        },
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
