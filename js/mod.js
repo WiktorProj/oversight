@@ -12,13 +12,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1+3.75ε+ε^2",
-	name: "oversight ??",
+	num: "-1+3.75ε+ε^2+ε^3",
+	name: "oversight ???",
 }
 
 let changelog = `<h1>changelog:</h1><br><br>
 	<h3>v-1+xε: oversight ?</h3><br>
-		- nothing much to note<br><br>
+		- nothing much to note; you can look through the github commit history for more details<br><br>
 	<h3>v-1: oversight</h3><br>
 		- stuff and things<br>
 		- i'm still workin on it hold on<br>
