@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1+2.5ε",
+	num: "-1+3ε",
 	name: "oversight ?",
 }
 
@@ -62,6 +62,8 @@ function getPointGen() {
 
 	if (hasUpgrade('p',11)) gain = gain.times(3)
 	if (hasUpgrade('p',13)) gain = gain.times(6)
+	
+	if (hasUpgrade('n',22)) gain = gain.times(upgradeEffect("n",22))
 
 	if (inChallenge("s",11)) gain = gain.sqrt()
 	if (inChallenge("s",21)) gain = gain.pow(0.2)
@@ -78,9 +80,13 @@ function addedPlayerData() { return {
 
 	"automations":new Decimal(0),
 
+	"voidshards":new Decimal(0),
+	"voidshardsgain":new Decimal(0),
+
 	"serenityunlocked":false,
 	"postcedingunlocked":false,
 	"precedingunlocked":false,
+	"nullunlocked":false,
 }}
 
 function getSpecificsGain() {
@@ -99,6 +105,8 @@ function getSpecificsGain() {
 	if (hasUpgrade('P',22)) gain = gain.times(3)
 
 	if (hasUpgrade('p',13)) gain = gain.times(5)
+	
+	if (getBuyableAmount("r",23).gt(0)) gain = gain.times(2)
 
 	if (inChallenge("s",22)) gain = gain.div(7.5)
 
@@ -109,9 +117,20 @@ function getSpecificsGain() {
 	if (hasUpgrade('P',11)) speed = speed.times(1.5)
 	if (hasUpgrade('P',22)) speed = speed.times(2)
 	
+	if (getBuyableAmount("r",23).gt(0)) speed = speed.times(0.5)
+	
 	if (inChallenge("s",22)) speed = speed.div(7.5)
 	
 	return [gain,speed]
+}
+
+function getVSGain() {
+	let gain = new Decimal(0)
+
+	if (hasUpgrade("n",11)) gain = gain.add(0.01)
+	if (hasUpgrade("n",21)) gain = gain.times(2)
+
+	return gain
 }
 
 // Display extra things at the top of the page

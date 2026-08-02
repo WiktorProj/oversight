@@ -433,6 +433,9 @@ var interval = setInterval(function() {
 
 	player["specificsgain"] = getSpecificsGain()[0]
 	player["specificsspeed"] = getSpecificsGain()[1]
+	player["voidshardsgain"] = getVSGain()
+
+	player["voidshards"] = player["voidshards"].add(player["voidshardsgain"].times(diff))
 
 	displayThings = []
 	if (inChallenge("s",11) && hasMilestone("r",1)) {
@@ -455,6 +458,9 @@ var interval = setInterval(function() {
 
 	if (hasChallenge("s",21)) player["postcedingunlocked"] = true
 	if (hasUpgrade("p",12)) player["precedingunlocked"] = true
+	if (hasUpgrade("p",15)) player["nullunlocked"] = true
+
+	if (getBuyableAmount("r",23).gt(0)&&player["r"].points.gt(0)) player["depositingrespecs"] = true
 
 	if (player["depositingrespecs"]) {
 		let deposit = Decimal.min(new Decimal(diff).times(player["specificsspeed"]),player["r"].points)

@@ -116,6 +116,16 @@ addLayer("ach", {
             tooltip: "Buy !iii",
             done(){return hasUpgrade("p",13)},
         },
+        31:{
+            name: "No more",
+            tooltip: "Get autospecifics",
+            done(){return getBuyableAmount("r",23).gt(0)},
+        },
+        32:{
+            name: "Welcome to the void",
+            tooltip: "Reset for nulls",
+            done(){return player["n"].points.gt(0)},
+        },
     },
     tabFormat:{
         "Achievements":{
@@ -210,6 +220,7 @@ addLayer("r", {
         if (hasUpgrade('r',14)) mult = mult.times(1.5)
         if (hasUpgrade('s',13)) mult = mult.times(1.47)
         if (hasUpgrade('s',32)) mult = mult.times(1.2)
+        if (hasUpgrade('n',22)) mult = mult.times(upgradeEffect("n",22))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -450,6 +461,18 @@ addLayer("r", {
                 return hasAchievement("ach",28)
             }
         },
+        23: {
+            cost(x) { return new Decimal(10) },
+            display() { return `<h2>Autospecifics</h2>\nCost: ${format(this.cost())} automation points\nEffect: ${getBuyableAmount(this.layer,this.id).gt(0)?"automatically start depositing respecs, x0.5 respec deposit speed, x2 specifics":"nothing yet..."}` },
+            canAfford() { return getBuyableAmount(this.layer, this.id).lt(1)&&player["automations"].gte(this.cost()) },
+            buy() {
+                player["automations"] = player["automations"].sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() {
+                return hasUpgrade("p",14)
+            }
+        },
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
@@ -502,6 +525,7 @@ addLayer("s", {
         if (hasUpgrade('s',32)) mult = mult.times(0.8)
         if (hasChallenge('s',12)) mult = mult.times(2)
         if (hasUpgrade('p',13)) mult = mult.times(4)
+        if (hasUpgrade('n',22)) mult = mult.times(upgradeEffect("n",22))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -747,10 +771,26 @@ addLayer("p", {
                 return hasAchievement("ach",24)
             },
         },
+        14:{
+            title: "!iv",
+            description: "Unlock more automation buyables",
+            cost: new Decimal(100),
+            unlocked(){
+                return hasUpgrade("p",13)
+            },
+        },
+        15:{
+            title: "!v",
+            description: "Unlock another reset layer",
+            cost: new Decimal(1000),
+            unlocked(){
+                return hasUpgrade("p",14)
+            },
+        },
     },
     row: 2, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "p", description: "P: reset for postcedings", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "p", description: "P: reset for postcedes", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     branches: [
         "s"
@@ -843,10 +883,100 @@ addLayer("P", {
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
-        {key: "e", description: "E: reset for pr<b>e</b>cedes", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+        {key: "e", description: "E: reset for prEcedes", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
     ],
     branches: [
         "r"
     ],
     layerShown(){return player["precedingunlocked"]}
+})
+
+// NULL
+addLayer("n", {
+    name: "null", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "N", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: false,
+		points: new Decimal(0),
+    }},
+    color: "#3f3f3f",
+    requires: new Decimal(2000), // Can be a function that takes requirement increases into account
+    resource: "nulls", // Name of prestige currency
+    baseResource: "postcedes", // Name of resource prestige is based on
+    baseAmount() {return player["p"].points}, // Get the current amount of baseResource
+    type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.3, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1)
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    tabFormat:{
+        "Upgrades":{
+            content: [
+                "main-display",
+                "prestige-button",
+                "resource-display",
+                "blank",
+                "upgrades",
+            ]
+        },
+        "Void":{
+            content: [
+                ["display-text",
+                    function() {
+                        let time = +(new Date()) // god please forgive me for what i'm doing
+                        let col = HSVtoRGB((time/10000)%1,1,1)
+                        return `You have <h2 style="color: rgb(${col.r}, ${col.g}, ${col.b}); text-shadow: rgb(${col.r}, ${col.g}, ${col.b}) 0px 0px 10px;">${format(player["voidshards"])}</h2> void shards` }],
+                ["display-text", function() {
+                    return `(${format(player["voidshardsgain"])}/sec)`}],
+                "blank",
+                "upgrades",
+            ]
+        },
+    },
+    upgrades: {
+        11:{
+            title: "-i",
+            description: "Unlock a new tab",
+            cost: new Decimal(1),
+        },
+        21:{
+            title: "-ii",
+            description: "x2 void shard gain",
+            cost: new Decimal(1),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",11)
+            }
+        },
+        22:{
+            title: "-iii",
+            description: "Multiply point, respec and serenity gain based off of void shards",
+            cost: new Decimal(2),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",21)
+            },
+            effect(){
+                return player["voidshards"].times(5).add(1).pow(0.6)
+            },
+            effectDisplay() {
+                return "x"+format(upgradeEffect(this.layer,this.id))
+            }
+        },
+    },
+    row: 3, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+        {key: "n", description: "N: reset for nulls", onPress(){if (canReset(this.layer)) doReset(this.layer)}},
+    ],
+    branches: [
+        "p"
+    ],
+    layerShown(){return player["nullunlocked"]}
 })
