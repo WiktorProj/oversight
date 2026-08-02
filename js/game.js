@@ -462,6 +462,13 @@ var interval = setInterval(function() {
 
 	if (getBuyableAmount("r",23).gt(0)&&player["r"].points.gt(0)) player["depositingrespecs"] = true
 
+	let challs = [11,12,21,22]
+	for (let i=0;i<getBuyableAmount("r",24).toNumber();i++){
+		if (layers["s"].challenges[challs[i]].unlocked && layers["s"].challenges[challs[i]].canComplete && !hasChallenge("s",challs[i])) {
+			player["s"].challenges
+		}
+	}
+
 	if (player["depositingrespecs"]) {
 		let deposit = Decimal.min(new Decimal(diff).times(player["specificsspeed"]),player["r"].points)
 		player["r"].points = player["r"].points.sub(deposit)
