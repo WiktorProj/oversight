@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1+3ε",
+	num: "-1+3.5ε",
 	name: "oversight ?",
 }
 
@@ -64,6 +64,7 @@ function getPointGen() {
 	if (hasUpgrade('p',13)) gain = gain.times(6)
 	
 	if (hasUpgrade('n',22)) gain = gain.times(upgradeEffect("n",22))
+	if (hasUpgrade('n',23)) gain = gain.times(upgradeEffect("n",23))
 
 	if (inChallenge("s",11)) gain = gain.sqrt()
 	if (inChallenge("s",21)) gain = gain.pow(0.2)
@@ -106,6 +107,8 @@ function getSpecificsGain() {
 
 	if (hasUpgrade('p',13)) gain = gain.times(5)
 	
+	if (hasUpgrade("n",25)) gain = gain.times(5)
+	
 	if (getBuyableAmount("r",23).gt(0)) gain = gain.times(2)
 
 	if (inChallenge("s",22)) gain = gain.div(7.5)
@@ -116,6 +119,7 @@ function getSpecificsGain() {
 	if (hasUpgrade('s',23)) speed = speed.times(2.17)
 	if (hasUpgrade('P',11)) speed = speed.times(1.5)
 	if (hasUpgrade('P',22)) speed = speed.times(2)
+	if (hasUpgrade("n",25)) gain = gain.times(3)
 	
 	if (getBuyableAmount("r",23).gt(0)) speed = speed.times(0.5)
 	
@@ -129,6 +133,7 @@ function getVSGain() {
 
 	if (hasUpgrade("n",11)) gain = gain.add(0.01)
 	if (hasUpgrade("n",21)) gain = gain.times(2)
+	if (hasUpgrade("n",24)) gain = gain.times(2)
 
 	return gain
 }

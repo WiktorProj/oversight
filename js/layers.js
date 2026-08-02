@@ -126,6 +126,11 @@ addLayer("ach", {
             tooltip: "Reset for nulls",
             done(){return player["n"].points.gt(0)},
         },
+        33:{
+            name: "It calls",
+            tooltip: "Buy -iii",
+            done(){return hasUpgrade("n",22)},
+        },
     },
     tabFormat:{
         "Achievements":{
@@ -221,6 +226,7 @@ addLayer("r", {
         if (hasUpgrade('s',13)) mult = mult.times(1.47)
         if (hasUpgrade('s',32)) mult = mult.times(1.2)
         if (hasUpgrade('n',22)) mult = mult.times(upgradeEffect("n",22))
+        if (hasUpgrade('n',23)) mult = mult.times(upgradeEffect("n",23))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -285,7 +291,7 @@ addLayer("r", {
                     function() { return `You have <h2 style="color: rgb(42, 255, 234); text-shadow: rgb(42, 255, 234) 0px 0px 10px;">${format(player["specifics"])}</h2> specifics` }],
                 "blank",
                 ["display-text",
-                    function() { return `You have <h2 style="color: rgb(0, 127, 0); text-shadow: rgb(0, 127, 0) 0px 0px 10px;">${format(player["automations"],0)}</h2> automation points` }],
+                    function() { return `You have <h2 style="color: rgb(0, 127, 0); text-shadow: rgb(0, 127, 0) 0px 0px 10px;">${format(player["automations"],0)}</h2>/${format(getBuyableAmount(this.layer,11),0)} automation points` }],
                 ["display-text",
                     function() { return `You will keep automation points on future resets` }],
                 "blank",
@@ -398,13 +404,11 @@ addLayer("r", {
             display() {return `Respec automation buyables`},
             canClick() {return true},
             onClick() {
-                let buyables = [21,22]
+                let buyables = [21,22,23,24]
                 for (i in buyables) {
-                    while (getBuyableAmount(this.layer,buyables[i]).gt(0)) {
-                        player["automations"] = player["automations"].add(layers["r"].buyables[21].cost(getBuyableAmount(this.layer,buyables[i]).sub(1)))
-                        setBuyableAmount(this.layer,buyables[i],getBuyableAmount(this.layer,buyables[i]).sub(1))
-                    }
+                    setBuyableAmount(this.layer,buyables[i],new Decimal(0))
                 }
+                player["automations"] = getBuyableAmount(this.layer,11)
             },
             unlocked(){return hasAchievement("ach",28)}
         }
@@ -463,8 +467,20 @@ addLayer("r", {
         },
         23: {
             cost(x) { return new Decimal(10) },
-            display() { return `<h2>Autospecifics</h2>\nCost: ${format(this.cost())} automation points\nEffect: ${getBuyableAmount(this.layer,this.id).gt(0)?"automatically start depositing respecs, x0.5 respec deposit speed, x2 specifics":"nothing yet..."}` },
+            display() { return `<h2>Autospecifics</h2>\nCost: ${format(this.cost())} automation points\nEffect: ${getBuyableAmount(this.layer,this.id).gt(0)?"automatically start depositing respecs, /2 respec deposit speed, x2 specifics":"nothing yet..."}` },
             canAfford() { return getBuyableAmount(this.layer, this.id).lt(1)&&player["automations"].gte(this.cost()) },
+            buy() {
+                player["automations"] = player["automations"].sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() {
+                return hasUpgrade("p",14)
+            }
+        },
+        24: {
+            cost(x) { return new Decimal(2).pow(x.add(2)) },
+            display() { return `<h2>Autochallenges</h2>\nCost: ${format(this.cost())} automation points\nEffect: ${format(getBuyableAmount(this.layer, this.id),0)}/4 challenges automated` },
+            canAfford() { return getBuyableAmount(this.layer, this.id).lt(4)&&player["automations"].gte(this.cost()) },
             buy() {
                 player["automations"] = player["automations"].sub(this.cost())
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
@@ -526,6 +542,7 @@ addLayer("s", {
         if (hasChallenge('s',12)) mult = mult.times(2)
         if (hasUpgrade('p',13)) mult = mult.times(4)
         if (hasUpgrade('n',22)) mult = mult.times(upgradeEffect("n",22))
+        if (hasUpgrade('n',23)) mult = mult.times(upgradeEffect("n",23))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -733,6 +750,7 @@ addLayer("p", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasChallenge('s',22)) mult = mult.times(1.5)
+        if (hasChallenge('n',24)) mult = mult.times(3)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -818,6 +836,7 @@ addLayer("P", {
         mult = new Decimal(1)
         if (hasChallenge('s',22)) mult = mult.times(2)
         if (hasUpgrade('p',13)) mult = mult.times(3)
+        if (hasChallenge('n',24)) mult = mult.times(4)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -969,6 +988,42 @@ addLayer("n", {
             effectDisplay() {
                 return "x"+format(upgradeEffect(this.layer,this.id))
             }
+        },
+        23:{
+            title: "-iv",
+            description: "Copy of -iii, but reduced effect",
+            cost: new Decimal(12),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",22)
+            },
+            effect(){
+                return player["voidshards"].times(4).add(1).pow(0.4)
+            },
+            effectDisplay() {
+                return "x"+format(upgradeEffect(this.layer,this.id))
+            }
+        },
+        24:{
+            title: "-v",
+            description: "x2 void shards, x3 postcedes, x4 precedes",
+            cost: new Decimal(30),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",23)
+            },
+        },
+        25:{
+            title: "-vi",
+            description: "x5 specifics, x3 respec deposit speed",
+            cost: new Decimal(60),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",24)
+            },
         },
     },
     row: 3, // Row the layer is in on the tree (0 is the first row)
