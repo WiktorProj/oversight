@@ -12,11 +12,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1+3.99ε+ε^2+ε^3",
+	num: "-1+3.9999ε+2ε^2+ε^3",
 	name: "oversight ???",
 }
 
 let changelog = `<h1>changelog:</h1><br><br>
+	<h3>v-1+3.9999ε+2ε^2+ε^3: oversight ???</h3><br>
+		- actually made the game winnable<br><br>
 	<h3>v-1+xε: oversight ?</h3><br>
 		- nothing much to note; you can look through the github commit history for more details<br><br>
 	<h3>v-1: oversight</h3><br>
@@ -24,7 +26,7 @@ let changelog = `<h1>changelog:</h1><br><br>
 		- i'm still workin on it hold on<br>
 		- first release??`
 
-let winText = `you win.`
+let winText = `you win. FOR NOW.`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -84,6 +86,8 @@ function addedPlayerData() { return {
 
 	"voidshards":new Decimal(0),
 	"voidshardsgain":new Decimal(0),
+	"singularities":new Decimal(0),
+	"escaped":false,
 
 	"serenityunlocked":false,
 	"postcedingunlocked":false,
@@ -138,7 +142,28 @@ function getVSGain() {
 	if (hasUpgrade("n",24)) gain = gain.times(2)
 	if (hasUpgrade('n',26)) gain = gain.times(upgradeEffect("n",26))
 	if (hasUpgrade("n",27)) gain = gain.times(5)
-	if (hasUpgrade("n",28)) gain = gain.times(4)
+	if (hasUpgrade("n",31)) gain = gain.times(4)
+	if (hasUpgrade("n",32)) gain = gain.times(4)
+	if (hasUpgrade("n",33)) gain = gain.times(4)
+	if (hasUpgrade("n",34)) gain = gain.times(4)
+	if (hasUpgrade("n",35)) gain = gain.times(4)
+	if (hasUpgrade("n",36)) gain = gain.times(4)
+	if (hasUpgrade("n",37)) gain = gain.times(4)
+	if (hasUpgrade('n',41)) gain = gain.times(upgradeEffect("n",41))
+	if (hasMilestone('n',0)) gain = gain.times(2)
+	if (hasUpgrade("n",43)) gain = gain.times(3)
+	if (hasUpgrade("n",44)) gain = gain.times(2)
+	if (hasUpgrade("n",45)) gain = gain.times(1.5)
+	if (hasUpgrade("n",46)) gain = gain.times(upgradeEffect("n",46))
+	if (hasMilestone('n',1)) gain = gain.times(3)
+	if (hasMilestone('n',2)) gain = gain.times(2.17)
+	if (hasUpgrade("n",47)) gain = gain.times(5)
+	if (hasUpgrade("n",51)) gain = gain.times(4)
+	if (hasMilestone('n',3)) gain = gain.times(1.47)
+	if (hasUpgrade("n",52)) gain = gain.times(3)
+	if (hasUpgrade("n",53)) gain = gain.times(3)
+	if (hasUpgrade("n",54)) gain = gain.times(6)
+	if (hasMilestone('n',4)) gain = gain.times(4.19)
 
 	return gain
 }
@@ -149,7 +174,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return player["escaped"]//player.points.gte(new Decimal("e280000000"))
 }
 
 

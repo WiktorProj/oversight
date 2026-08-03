@@ -136,6 +136,16 @@ addLayer("ach", {
             tooltip: "Buy -viii",
             done(){return hasUpgrade("n",12)},
         },
+        35:{
+            name: "Almost there...?",
+            tooltip: "Get a singularity",
+            done(){return player["singularities"].gt(0)},
+        },
+        36:{
+            name: "!!!",
+            tooltip: "Escape the void",
+            done(){return player["escaped"]},
+        },
     },
     tabFormat:{
         "Achievements":{
@@ -959,7 +969,104 @@ addLayer("n", {
                     return `(${format(player["voidshardsgain"])}/sec)`}],
                 "blank",
                 "upgrades",
-            ]
+            ],
+            unlocked(){
+                return hasUpgrade("n",11)
+            }
+        },
+        "Singularities":{
+            content: [
+                ["display-text",
+                    function() {
+                        let time = +(new Date()) // god please forgive me for what i'm doing
+                        let col = HSVtoRGB((time/10000)%1,1,1)
+                        return `You have <h2 style="color: rgb(${col.r}, ${col.g}, ${col.b}); text-shadow: rgb(${col.r}, ${col.g}, ${col.b}) 0px 0px 10px;">${format(player["voidshards"])}</h2> void shards` }],
+                ["display-text", function() {
+                    return `(${format(player["voidshardsgain"])}/sec)`}],
+                "blank",
+                ["display-text", function() {
+                    return `You have <h2 style="color: rgb(0,0,0); text-shadow: rgb(255,255,255) 0px 0px 10px;">${format(player["singularities"])}</h2> singularities`}],
+                "blank",
+                ["bar","singularity"],
+                "blank",
+                //["display-text", function() {
+                //    return `You will get your next singularity in ${formatTime(new Decimal(10).pow(player["singularities"].add(7)).sub(player["voidshards"]).div(player["voidshardsgain"]))}`}],
+                "milestones",
+            ],
+            unlocked(){
+                return hasUpgrade("n",42)&&!hasAchievement("ach",36)
+            }
+        },
+        "Escape":{
+            content: [
+                ["display-text",
+                    function() {
+                        let time = +(new Date()) // god please forgive me for what i'm doing
+                        let col = HSVtoRGB((time/10000)%1,1,1)
+                        return `You have <h2 style="color: rgb(${col.r}, ${col.g}, ${col.b}); text-shadow: rgb(${col.r}, ${col.g}, ${col.b}) 0px 0px 10px;">${format(player["voidshards"])}</h2> void shards` }],
+                ["display-text", function() {
+                    return `(${format(player["voidshardsgain"])}/sec)`}],
+                "blank",
+                ["display-text", function() {
+                    return `You need ${format(new Decimal(1e15))} void shards to escape`}],
+                "blank",
+                ["clickable",11],
+            ],
+            unlocked(){
+                return hasAchievement("ach",34)&&!hasAchievement("ach",36)
+            }
+        },
+    },
+    clickables: {
+        11: {
+            display() {return `<h1>Escape?</h1>`},
+            canClick() {return player["voidshards"].gt(1e15)},
+            onClick() {
+                player["escaped"] = true
+                player["n"].upgrades = [11,12,21,22,23,24,25,26]
+                player["voidshards"] = new Decimal(0)
+                player["singularities"] = new Decimal(0)
+                player["n"].minestones = []
+            }
+        },
+    },
+    bars: {
+        singularity: {
+            direction: RIGHT,
+            width: 600,
+            height: 50,
+            progress() { return player["voidshards"].div(new Decimal(10).pow(player["singularities"].add(7))).toNumber() },
+            fillStyle: {"background-color":"rgb(54,54,54)"},
+            display() {
+                return `${format(player["voidshards"])}/${format(new Decimal(10).pow(player["singularities"].add(7)))} void shards to next singularity`
+            }
+        },
+    },
+    milestones: {
+        0: {
+            requirementDescription: "1 singularity",
+            effectDescription: "Unlock more void shard upgrades, x2 void shards",
+            done() { return player["singularities"].gte(1) }
+        },
+        1: {
+            requirementDescription: "2 singularities",
+            effectDescription: "x3 void shards",
+            done() { return player["singularities"].gte(2) }
+        },
+        2: {
+            requirementDescription: "3 singularities",
+            effectDescription: "Unlock even more void shard upgrades, x2.17 void shards",
+            done() { return player["singularities"].gte(3) }
+        },
+        3: {
+            requirementDescription: "5 singularities",
+            effectDescription: "x1.47 void shards",
+            done() { return player["singularities"].gte(5) }
+        },
+        4: {
+            requirementDescription: "8 singularities",
+            effectDescription: "x4.19 void shards",
+            done() { return player["singularities"].gte(8) }
         },
     },
     upgrades: {
@@ -1061,10 +1168,10 @@ addLayer("n", {
             currencyDisplayName: "void shards",
             currencyInternalName: "voidshards",
             unlocked(){
-                return hasUpgrade("n",12)
+                return hasUpgrade("n",12)&&!hasAchievement("ach",36)
             },
         },
-        28:{
+        31:{
             title: "-x",
             description: "x4 void shards",
             cost: new Decimal(60),
@@ -1072,6 +1179,188 @@ addLayer("n", {
             currencyInternalName: "voidshards",
             unlocked(){
                 return hasUpgrade("n",27)
+            },
+        },
+        32:{
+            title: "-xi",
+            description: "x4 void shards",
+            cost: new Decimal(150),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",31)
+            },
+        },
+        33:{
+            title: "-xii",
+            description: "x4 void shards",
+            cost: new Decimal(150*4),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",32)
+            },
+        },
+        34:{
+            title: "-xiii",
+            description: "x4 void shards",
+            cost: new Decimal(150*16),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",33)
+            },
+        },
+        35:{
+            title: "-xiv",
+            description: "x4 void shards",
+            cost: new Decimal(150*64),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",34)
+            },
+        },
+        36:{
+            title: "-xv",
+            description: "x4 void shards",
+            cost: new Decimal(150*256),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",35)
+            },
+        },
+        37:{
+            title: "-xvi",
+            description: "x4 void shards",
+            cost: new Decimal(150*1024),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",36)
+            },
+        },
+        41:{
+            title: "-xvii",
+            description: "It's something different this time! Void shards boost themselves",
+            cost: new Decimal(6e5),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",37)
+            },
+            effect(){
+                return player["voidshards"].divide(25000).add(1).pow(0.3)
+            },
+            effectDisplay() {
+                return "x"+format(upgradeEffect(this.layer,this.id))
+            }
+        },
+        42:{
+            title: "-xviii",
+            description: "Unlock another tab",
+            cost: new Decimal(4e6),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",41)
+            },
+        },
+        43:{
+            title: "-xix",
+            description: "x3 void shards",
+            cost: new Decimal(16e6),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasMilestone("n",0)
+            },
+        },
+        44:{
+            title: "-xx",
+            description: "x2 void shards",
+            cost: new Decimal(32e6),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",43)
+            },
+        },
+        45:{
+            title: "-xxi",
+            description: "Why are you still here? x1.5 void shards",
+            cost: new Decimal(48e6),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",44)
+            },
+        },
+        46:{
+            title: "-xxii",
+            description: "Singularities boost void shards",
+            cost: new Decimal(64e6),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",45)
+            },
+            effect(){
+                return player["singularities"].add(1)
+            },
+            effectDisplay() {
+                return "x"+format(upgradeEffect(this.layer,this.id))
+            }
+        },
+        47:{
+            title: "-xxiii",
+            description: "The escape is even closer. x5 void shards",
+            cost: new Decimal(2e9),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasMilestone("n",2)
+            },
+        },
+        51:{
+            title: "-xxiv",
+            description: "In the end, it doesn't matter. x4 void shards",
+            cost: new Decimal(2e9),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",47)
+            },
+        },
+        52:{
+            title: "-xxv",
+            description: "Don't act like it did. x3 void shards",
+            cost: new Decimal(2e12),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",51)
+            },
+        },
+        53:{
+            title: "-xxvi",
+            description: "Time to move on. x3 void shards",
+            cost: new Decimal(1e13),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",52)
+            },
+        },
+        54:{
+            title: "-xxvii",
+            description: "It's time. x6 void shards",
+            cost: new Decimal(6e13),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",52)
             },
         },
     },

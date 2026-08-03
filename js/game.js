@@ -464,6 +464,11 @@ var interval = setInterval(function() {
 
 	if (getBuyableAmount("r",23).gt(0)&&player["r"].points.gt(0)) player["depositingrespecs"] = true
 
+	if (player["voidshards"].sub(new Decimal(10).pow(player["singularities"].add(7))).gte(1)&&!hasAchievement("ach",36)) {
+		player["singularities"] = player["singularities"].add(1)
+		player["voidshards"] = new Decimal(0)
+	}
+
 	let challs = [11,12,21,22]
 	for (let i=0;i<getBuyableAmount("r",24).toNumber();i++){
 		if (layers["s"].challenges[challs[i]].unlocked && layers["s"].challenges[challs[i]].canComplete && !hasChallenge("s",challs[i])) {
