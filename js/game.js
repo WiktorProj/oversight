@@ -452,6 +452,8 @@ var interval = setInterval(function() {
 		]
 	}
 
+	if (hasAchievement("ach",34)&&!hasAchievement("ach",36)) displayThings.push("You are currently stuck in the void")
+
 	if (inChallenge("s",12)) {
 		player["specifics"] = player["specifics"].divide(new Decimal(1.11).pow(diff))
 	}
@@ -465,7 +467,7 @@ var interval = setInterval(function() {
 	let challs = [11,12,21,22]
 	for (let i=0;i<getBuyableAmount("r",24).toNumber();i++){
 		if (layers["s"].challenges[challs[i]].unlocked && layers["s"].challenges[challs[i]].canComplete && !hasChallenge("s",challs[i])) {
-			player["s"].challenges
+			player["s"].challenges[challs[i]] += 1
 		}
 	}
 

@@ -131,6 +131,11 @@ addLayer("ach", {
             tooltip: "Buy -iii",
             done(){return hasUpgrade("n",22)},
         },
+        34:{
+            name: "???",
+            tooltip: "Buy -viii",
+            done(){return hasUpgrade("n",12)},
+        },
     },
     tabFormat:{
         "Achievements":{
@@ -515,7 +520,7 @@ addLayer("r", {
         if (hasUpgrade('P',14)) return 0.01
         return 0
     },
-    layerShown(){return true}
+    layerShown(){return true&&(!hasAchievement("ach",34)||hasAchievement("ach",36))}
 })
 
 // SERENITY
@@ -728,7 +733,7 @@ addLayer("s", {
     passiveGeneration(){
         return getBuyableAmount("r",22).div(200)
     },
-    layerShown(){return player["serenityunlocked"]}
+    layerShown(){return player["serenityunlocked"]&&(!hasAchievement("ach",34)||hasAchievement("ach",36))}
 })
 
 // POSTCEDING
@@ -813,7 +818,7 @@ addLayer("p", {
     branches: [
         "s"
     ],
-    layerShown(){return player["postcedingunlocked"]}
+    layerShown(){return player["postcedingunlocked"]&&(!hasAchievement("ach",34)||hasAchievement("ach",36))}
 })
 
 // PRECEDING
@@ -907,7 +912,7 @@ addLayer("P", {
     branches: [
         "r"
     ],
-    layerShown(){return player["precedingunlocked"]}
+    layerShown(){return player["precedingunlocked"]&&(!hasAchievement("ach",34)||hasAchievement("ach",36))}
 })
 
 // NULL
@@ -992,7 +997,7 @@ addLayer("n", {
         23:{
             title: "-iv",
             description: "Copy of -iii, but reduced effect",
-            cost: new Decimal(12),
+            cost: new Decimal(4),
             currencyDisplayName: "void shards",
             currencyInternalName: "voidshards",
             unlocked(){
@@ -1008,7 +1013,7 @@ addLayer("n", {
         24:{
             title: "-v",
             description: "x2 void shards, x3 postcedes, x4 precedes",
-            cost: new Decimal(30),
+            cost: new Decimal(8),
             currencyDisplayName: "void shards",
             currencyInternalName: "voidshards",
             unlocked(){
@@ -1018,11 +1023,55 @@ addLayer("n", {
         25:{
             title: "-vi",
             description: "x5 specifics, x3 respec deposit speed",
-            cost: new Decimal(60),
+            cost: new Decimal(16),
             currencyDisplayName: "void shards",
             currencyInternalName: "voidshards",
             unlocked(){
                 return hasUpgrade("n",24)
+            },
+        },
+        26:{
+            title: "-vii",
+            description: "Nulls boost void shards",
+            cost: new Decimal(18),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",25)
+            },
+            effect(){
+                return player["n"].points.add(1).pow(0.5)
+            },
+            effectDisplay() {
+                return "x"+format(upgradeEffect(this.layer,this.id))
+            }
+        },
+        12:{
+            title: "-viii",
+            description: "This one is more <i><span class=\"upndown1\">m</span><span class=\"upndown2\">y</span><span class=\"upndown3\">s</span><span class=\"upndown4\">t</span><span class=\"upndown5\">e</span><span class=\"upndown1\">r</span><span class=\"upndown2\">i</span><span class=\"upndown3\">o</span><span class=\"upndown4\">u</span><span class=\"upndown5\">s</span></i>...",
+            cost: new Decimal(3),
+            unlocked(){
+                return hasUpgrade("n",26)
+            },
+        },
+        27:{
+            title: "-ix",
+            description: "x5 void shards",
+            cost: new Decimal(30),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",12)
+            },
+        },
+        28:{
+            title: "-x",
+            description: "x4 void shards",
+            cost: new Decimal(60),
+            currencyDisplayName: "void shards",
+            currencyInternalName: "voidshards",
+            unlocked(){
+                return hasUpgrade("n",27)
             },
         },
     },

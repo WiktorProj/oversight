@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1+3.75ε+ε^2+ε^3",
+	num: "-1+3.99ε+ε^2+ε^3",
 	name: "oversight ???",
 }
 
@@ -36,6 +36,7 @@ function getStartPoints(){
 
 // Determines if it should show points/sec
 function canGenPoints(){
+	if (hasAchievement("ach",34)&&!hasAchievement("ach",36)) return false
 	return true
 }
 
@@ -132,8 +133,12 @@ function getVSGain() {
 	let gain = new Decimal(0)
 
 	if (hasUpgrade("n",11)) gain = gain.add(0.01)
+	if (hasUpgrade("n",12)) gain = gain.times(3)
 	if (hasUpgrade("n",21)) gain = gain.times(2)
 	if (hasUpgrade("n",24)) gain = gain.times(2)
+	if (hasUpgrade('n',26)) gain = gain.times(upgradeEffect("n",26))
+	if (hasUpgrade("n",27)) gain = gain.times(5)
+	if (hasUpgrade("n",28)) gain = gain.times(4)
 
 	return gain
 }
