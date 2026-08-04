@@ -1,6 +1,3 @@
-let sach11 = false
-let sach12 = false
-
 // ACHIEVEMENTS
 addLayer("ach", {
     name: "achis", // This is optional, only used in a few places, If absent it just uses the layer id.
@@ -165,59 +162,7 @@ addLayer("ach", {
     row: "side", // Row the layer is in on the tree (0 is the first row)
     layerShown(){return true}
 })
-addLayer("sa", {
-    name: "specialachs", // This is optional, only used in a few places, If absent it just uses the layer id.
-    symbol: "S", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
-    startData() { return {
-        unlocked: true,
-		points: new Decimal(0),
-    }},
-    color: "#ff7f00",
-    requires: new Decimal(10), // Can be a function that takes requirement increases into account
-    resource: "nil", // Name of prestige currency
-    baseResource: "points", // Name of resource prestige is based on
-    baseAmount() {return new Decimal(0)}, // Get the current amount of baseResource
-    tooltip(){return "Special Achievements"},
-    type: "none", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.5, // Prestige currency exponent
-    gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1)
-        return mult
-    },
-    gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
-    },
-    achievements:{
-        11:{
-            name: "General",
-            tooltip: "Serenity reset without having any specifics",
-            done(){return sach11},
-        },
-        12:{
-            name: "General v2",
-            tooltip: "Complete ~↓ without having any specifics",
-            done(){return sach12},
-        },
-    },
-    tabFormat:{
-        "Special Achievements":{
-            content: [
-                "infoboxes",
-                "blank",
-                "achievements",
-            ]
-        },
-    },
-    infoboxes:{
-        about:{
-            title: "About special achievements",
-            body() { return "These achievements are, well, special. They don't affect the main progression. They only serve as minichallenges without a reward (maybe in a later update?)" },
-        }
-    },
-    row: "side", // Row the layer is in on the tree (0 is the first row)
-    layerShown(){return true}
-})
+// special achievements are gone :(
 
 // RESPEC
 addLayer("r", {
@@ -512,7 +457,6 @@ addLayer("r", {
     doReset(l) {
         if (l != this.layer) {
             layerDataReset(this.layer,["milestones","buyables"])
-            if (player["specifics"].eq(0) && l=="s") sach11 = true
             if (hasUpgrade("P",11)) {
                 player["specifics"] = player["specifics"].times(0.05)
             } else {
@@ -686,9 +630,6 @@ addLayer("s", {
                 player["specifics"] = new Decimal(0)
             },
             onExit:this.onEnter,
-            onComplete(){
-                if (player["specifics"].eq(0)) sach12 = true
-            },
         },
         12: {
             name: "~↓↓",
@@ -1274,7 +1215,7 @@ addLayer("n", {
             currencyDisplayName: "void shards",
             currencyInternalName: "voidshards",
             unlocked(){
-                return hasMilestone("n",0)
+                return hasMilestone("n",0)&&!hasAchievement("ach",36)
             },
         },
         44:{
@@ -1320,7 +1261,7 @@ addLayer("n", {
             currencyDisplayName: "void shards",
             currencyInternalName: "voidshards",
             unlocked(){
-                return hasMilestone("n",2)
+                return hasMilestone("n",2)&&!hasAchievement("ach",36)
             },
         },
         51:{

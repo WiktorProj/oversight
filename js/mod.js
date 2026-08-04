@@ -12,11 +12,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1+3.9999ε+2ε^2+ε^3",
+	num: "-1+3.9999ε+3ε^2+ε^3",
 	name: "oversight ???",
 }
 
 let changelog = `<h1>changelog:</h1><br><br>
+	<h3>v-1+3.9999ε+3ε^2+ε^3: oversight ???</h3><br>
+		- removed special achievements; they were buggy and only 2 of them existed<br><br>
 	<h3>v-1+3.9999ε+2ε^2+ε^3: oversight ???</h3><br>
 		- actually made the game winnable<br><br>
 	<h3>v-1+xε: oversight ?</h3><br>
