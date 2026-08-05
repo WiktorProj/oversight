@@ -145,8 +145,8 @@ addLayer("ach", {
         },
         37:{
             name: "More boosts",
-            tooltip: "Have !vi and ?vii",
-            done(){return hasUpgrade("p",21)&&hasUpgrade("P",23)},
+            tooltip: "Have !vi and ?viii",
+            done(){return hasUpgrade("p",21)&&hasUpgrade("P",24)},
         },
     },
     tabFormat:{
@@ -388,7 +388,7 @@ addLayer("r", {
         1: {
             requirementDescription: "300 specifics",
             effectDescription: "Add some challenge-specific texts",
-            done() {return player["specifics"].gte(300)},
+            done() {return player["specifics"].gte(300)&&hasChallenge('s',11)},
             unlocked() {return hasChallenge('s',11)||hasMilestone('r',1)}
         },
     },
@@ -463,7 +463,7 @@ addLayer("r", {
     doReset(l) {
         if (l != this.layer) {
             layerDataReset(this.layer,["milestones","buyables"])
-            if (hasUpgrade("P",11)) {
+            if (hasUpgrade("P",12)) {
                 player["specifics"] = player["specifics"].times(0.05)
             } else {
                 player["specifics"] = new Decimal(0)
@@ -654,7 +654,7 @@ addLayer("s", {
             name: "~↓↓↓",
             challengeDescription: "^0.2 point gain",
             goalDescription: "200 specifics",
-            rewardDescription: "Unlock next reset layer",
+            rewardDescription: "Unlock next reset layer, x1.5 points",
             canComplete: function() {return player['specifics'].gte(200)},
             onEnter(){
                 layerDataReset("r",["milestones","buyables"])
@@ -688,6 +688,7 @@ addLayer("s", {
         "r"
     ],
     passiveGeneration(){
+        if (!(hasUpgrade('P',21)||hasAchievement("ach",28))) return 0
         return getBuyableAmount("r",22).div(200)
     },
     layerShown(){return player["serenityunlocked"]&&(!hasAchievement("ach",34)||hasAchievement("ach",36))}
@@ -712,7 +713,8 @@ addLayer("p", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
         if (hasChallenge('s',22)) mult = mult.times(1.5)
-        if (hasChallenge('n',24)) mult = mult.times(3)
+        if (hasUpgrade('n',24)) mult = mult.times(3)
+        if (hasUpgrade('P',23)) mult = mult.times(upgradeEffect("P",23))
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -746,23 +748,23 @@ addLayer("p", {
         13:{
             title: "!iii",
             description: "x3 precedes, x4 serenity, x5 specifics, x6 points",
-            cost: new Decimal(10),
+            cost: new Decimal(4),
             unlocked(){
                 return hasAchievement("ach",24)
             },
         },
         14:{
             title: "!iv",
-            description: "Unlock more automation buyables",
-            cost: new Decimal(100),
+            description: "Unlock more automation buyables, x6 points again",
+            cost: new Decimal(20),
             unlocked(){
                 return hasUpgrade("p",13)
             },
         },
         15:{
             title: "!v",
-            description: "Unlock another reset layer",
-            cost: new Decimal(1000),
+            description: "Unlock another reset layer, x2.17 point gain",
+            cost: new Decimal(100),
             unlocked(){
                 return hasUpgrade("p",14)
             },
@@ -806,7 +808,7 @@ addLayer("P", {
         mult = new Decimal(1)
         if (hasChallenge('s',22)) mult = mult.times(2)
         if (hasUpgrade('p',13)) mult = mult.times(3)
-        if (hasChallenge('n',24)) mult = mult.times(4)
+        if (hasUpgrade('n',24)) mult = mult.times(4)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -871,10 +873,24 @@ addLayer("P", {
         },
         23:{
             title: "?vii",
-            description: "x15 respec deposit speed",
+            description: "Precedes boost postcedes",
             cost: new Decimal(100),
             unlocked(){
-                return hasUpgrade("P",22)&&hasUpgrade("n",12)
+                return hasUpgrade("P",22)
+            },
+            effect(){
+                return player["P"].points.add(1).log10().add(1)
+            },
+            effectDisplay() {
+                return "x"+format(upgradeEffect(this.layer,this.id))
+            }
+        },
+        24:{
+            title: "?viii",
+            description: "x15 respec deposit speed",
+            cost: new Decimal(500),
+            unlocked(){
+                return hasUpgrade("P",23)&&hasUpgrade("n",12)
             },
         },
     },
@@ -898,7 +914,7 @@ addLayer("n", {
 		points: new Decimal(0),
     }},
     color: "#3f3f3f",
-    requires: new Decimal(2000), // Can be a function that takes requirement increases into account
+    requires: new Decimal(250), // Can be a function that takes requirement increases into account
     resource: "nulls", // Name of prestige currency
     baseResource: "postcedes", // Name of resource prestige is based on
     baseAmount() {return player["p"].points}, // Get the current amount of baseResource
@@ -999,7 +1015,10 @@ addLayer("n", {
             width: 600,
             height: 50,
             progress() { return player["voidshards"].div(new Decimal(10).pow(player["singularities"].add(7))).toNumber() },
-            fillStyle: {"background-color":"rgb(54,54,54)"},
+            fillStyle() {
+                let n = Math.floor(Math.random()*54)+27
+                return {"background-color":`rgb(${n},${n},${n})`}
+            },
             display() {
                 return `${format(player["voidshards"])}/${format(new Decimal(10).pow(player["singularities"].add(7)))} void shards to next singularity`
             }
@@ -1289,7 +1308,7 @@ addLayer("n", {
         51:{
             title: "-xxiv",
             description: "In the end, it doesn't matter. x4 void shards",
-            cost: new Decimal(2e9),
+            cost: new Decimal(2e10),
             currencyDisplayName: "void shards",
             currencyInternalName: "voidshards",
             unlocked(){
@@ -1323,7 +1342,7 @@ addLayer("n", {
             currencyDisplayName: "void shards",
             currencyInternalName: "voidshards",
             unlocked(){
-                return hasUpgrade("n",52)
+                return hasUpgrade("n",53)
             },
         },
     },

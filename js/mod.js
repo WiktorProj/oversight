@@ -12,11 +12,13 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1+4.0001ε+4ε^2+ε^3",
-	name: "oversight ???",
+	num: "-1+(4+1/3)ε+4ε^2+ε^3",
+	name: "oversight ????",
 }
 
 let changelog = `<h1>changelog:</h1><br><br>
+	<h3>v-1+(4+1/3)ε+4ε^2+ε^3: oversight ????</h3><br>
+		- major rebalance to postcede and null<br><br>
 	<h3>v-1+4.0001ε+4ε^2+ε^3: oversight ???</h3><br>
 		- added exactly 2 upgrades and exactly 1 achievement<br>
 		- fixed some bugs here or there (~iv, ~ix, ~x)<br><br>
@@ -65,11 +67,13 @@ function getPointGen() {
 	
 	if (hasChallenge('s',11)) gain = gain.times(3)
 	if (hasChallenge('s',12)) gain = gain.times(4)
+	if (hasChallenge('s',21)) gain = gain.times(1.5)
 
 	if (hasUpgrade('s',32)) gain = gain.times(0.8)
 
 	if (hasUpgrade('p',11)) gain = gain.times(5)
 	if (hasUpgrade('p',13)) gain = gain.times(6)
+	if (hasUpgrade("p",14)) gain = gain.times(6)
 	if (hasUpgrade("p",21)) gain = gain.times(5)
 	
 	if (hasUpgrade('n',22)) gain = gain.times(upgradeEffect("n",22))
@@ -117,8 +121,9 @@ function getSpecificsGain() {
 	if (hasUpgrade('P',22)) gain = gain.times(3)
 
 	if (hasUpgrade('p',13)) gain = gain.times(5)
+	if (hasUpgrade('p',15)) gain = gain.times(2.17)
 	if (hasUpgrade("p",21)) gain = gain.times(4)
-	
+
 	if (hasUpgrade("n",25)) gain = gain.times(5)
 	
 	if (getBuyableAmount("r",23).gt(0)) gain = gain.times(2)
@@ -132,7 +137,7 @@ function getSpecificsGain() {
 	if (hasUpgrade('P',11)) speed = speed.times(1.5)
 	if (hasUpgrade('P',22)) speed = speed.times(2)
 	if (hasUpgrade("n",25)) speed = speed.times(3)
-	if (hasUpgrade('P',23)) speed = speed.times(15)
+	if (hasUpgrade('P',24)) speed = speed.times(15)
 	
 	if (getBuyableAmount("r",23).gt(0)) speed = speed.times(0.5)
 	
@@ -144,7 +149,7 @@ function getSpecificsGain() {
 function getVSGain() {
 	let gain = new Decimal(0)
 
-	if (hasUpgrade("n",11)) gain = gain.add(0.01)
+	if (hasUpgrade("n",11)) gain = gain.add(0.02)
 	if (hasUpgrade("n",12)) gain = gain.times(3)
 	if (hasUpgrade("n",21)) gain = gain.times(2)
 	if (hasUpgrade("n",24)) gain = gain.times(2)

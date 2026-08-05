@@ -485,6 +485,10 @@ var interval = setInterval(function() {
 		}
 	}
 
+	if (player["escaped"]) {
+		player["n"].milestones = []
+	}
+
 	ticking = false
 }, 50)
 
