@@ -12,11 +12,14 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "-1+3.9999ε+3ε^2+ε^3",
+	num: "-1+4.0001ε+4ε^2+ε^3",
 	name: "oversight ???",
 }
 
 let changelog = `<h1>changelog:</h1><br><br>
+	<h3>v-1+4.0001ε+4ε^2+ε^3: oversight ???</h3><br>
+		- added exactly 2 upgrades and exactly 1 achievement<br>
+		- fixed some bugs here or there (~iv, ~ix, ~x)<br><br>
 	<h3>v-1+3.9999ε+3ε^2+ε^3: oversight ???</h3><br>
 		- removed special achievements; they were buggy and only 2 of them existed<br><br>
 	<h3>v-1+3.9999ε+2ε^2+ε^3: oversight ???</h3><br>
@@ -65,8 +68,9 @@ function getPointGen() {
 
 	if (hasUpgrade('s',32)) gain = gain.times(0.8)
 
-	if (hasUpgrade('p',11)) gain = gain.times(3)
+	if (hasUpgrade('p',11)) gain = gain.times(5)
 	if (hasUpgrade('p',13)) gain = gain.times(6)
+	if (hasUpgrade("p",21)) gain = gain.times(5)
 	
 	if (hasUpgrade('n',22)) gain = gain.times(upgradeEffect("n",22))
 	if (hasUpgrade('n',23)) gain = gain.times(upgradeEffect("n",23))
@@ -113,11 +117,12 @@ function getSpecificsGain() {
 	if (hasUpgrade('P',22)) gain = gain.times(3)
 
 	if (hasUpgrade('p',13)) gain = gain.times(5)
+	if (hasUpgrade("p",21)) gain = gain.times(4)
 	
 	if (hasUpgrade("n",25)) gain = gain.times(5)
 	
 	if (getBuyableAmount("r",23).gt(0)) gain = gain.times(2)
-
+	
 	if (inChallenge("s",22)) gain = gain.div(7.5)
 
 	let speed = new Decimal(1)
@@ -126,7 +131,8 @@ function getSpecificsGain() {
 	if (hasUpgrade('s',23)) speed = speed.times(2.17)
 	if (hasUpgrade('P',11)) speed = speed.times(1.5)
 	if (hasUpgrade('P',22)) speed = speed.times(2)
-	if (hasUpgrade("n",25)) gain = gain.times(3)
+	if (hasUpgrade("n",25)) speed = speed.times(3)
+	if (hasUpgrade('P',23)) speed = speed.times(15)
 	
 	if (getBuyableAmount("r",23).gt(0)) speed = speed.times(0.5)
 	

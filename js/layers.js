@@ -143,6 +143,11 @@ addLayer("ach", {
             tooltip: "Escape the void",
             done(){return player["escaped"]},
         },
+        37:{
+            name: "More boosts",
+            tooltip: "Have !vi and ?vii",
+            done(){return hasUpgrade("p",21)&&hasUpgrade("P",23)},
+        },
     },
     tabFormat:{
         "Achievements":{
@@ -184,9 +189,10 @@ addLayer("r", {
         mult = new Decimal(1)
         if (hasUpgrade('r',14)) mult = mult.times(1.5)
         if (hasUpgrade('s',13)) mult = mult.times(1.47)
-        if (hasUpgrade('s',32)) mult = mult.times(1.2)
+        if (hasUpgrade('s',42)) mult = mult.times(1.2)
         if (hasUpgrade('n',22)) mult = mult.times(upgradeEffect("n",22))
         if (hasUpgrade('n',23)) mult = mult.times(upgradeEffect("n",23))
+        if (hasUpgrade('p',21)) mult = mult.times(6)
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -383,7 +389,7 @@ addLayer("r", {
             requirementDescription: "300 specifics",
             effectDescription: "Add some challenge-specific texts",
             done() {return player["specifics"].gte(300)},
-            unlocked() {return hasUpgrade('s',31)}
+            unlocked() {return hasChallenge('s',11)||hasMilestone('r',1)}
         },
     },
     buyables: {
@@ -495,9 +501,9 @@ addLayer("s", {
     exponent: 0.2, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1)
-        if (hasUpgrade('s',12)) mult = mult.times(1.47)
+        if (hasUpgrade('s',21)) mult = mult.times(1.47)
         if (hasUpgrade('r',31)) mult = mult.times(1.36)
-        if (hasUpgrade('s',32)) mult = mult.times(0.8)
+        if (hasUpgrade('s',42)) mult = mult.times(0.8)
         if (hasChallenge('s',12)) mult = mult.times(2)
         if (hasUpgrade('p',13)) mult = mult.times(4)
         if (hasUpgrade('n',22)) mult = mult.times(upgradeEffect("n",22))
@@ -726,7 +732,7 @@ addLayer("p", {
     upgrades: {
         11:{
             title: "!i",
-            description: "x3 points",
+            description: "x5 points",
             cost: new Decimal(1),
         },
         12:{
@@ -759,6 +765,14 @@ addLayer("p", {
             cost: new Decimal(1000),
             unlocked(){
                 return hasUpgrade("p",14)
+            },
+        },
+        21:{
+            title: "!vi",
+            description: "x4 specifics, x5 points, x6 respecs",
+            cost: new Decimal(25000),
+            unlocked(){
+                return hasUpgrade("n",12)&&hasUpgrade("p",15)
             },
         },
     },
@@ -853,6 +867,14 @@ addLayer("P", {
             cost: new Decimal(12),
             unlocked(){
                 return hasUpgrade("P",21)
+            },
+        },
+        23:{
+            title: "?vii",
+            description: "x15 respec deposit speed",
+            cost: new Decimal(100),
+            unlocked(){
+                return hasUpgrade("P",22)&&hasUpgrade("n",12)
             },
         },
     },
